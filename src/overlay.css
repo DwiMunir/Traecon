@@ -1,0 +1,120 @@
+.backdrop {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: #faf9f7;
+  color: #1c1c1c;
+}
+
+@media (prefers-color-scheme: dark) {
+  .backdrop {
+    background: #141414;
+    color: #e8e6e3;
+  }
+}
+
+.sheet {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 32px 24px 96px;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 18px;
+  line-height: 1.7;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  font-family: system-ui, sans-serif;
+  margin-bottom: 24px;
+}
+
+.author {
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.author .username {
+  font-weight: 400;
+  opacity: 0.65;
+}
+
+.meta {
+  font-family: system-ui, sans-serif;
+  font-size: 13px;
+  opacity: 0.65;
+  margin-bottom: 32px;
+}
+
+.notice {
+  font-family: system-ui, sans-serif;
+  font-size: 13px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: rgba(200, 150, 0, 0.15);
+  margin-bottom: 24px;
+}
+
+.body p {
+  margin: 0 0 1em;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 48px;
+  font-family: system-ui, sans-serif;
+}
+
+button {
+  font: 14px system-ui, sans-serif;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+button:hover {
+  background: rgba(128, 128, 128, 0.12);
+}
+
+.close {
+  border: none;
+  font-size: 20px;
+  line-height: 1;
+  padding: 8px 10px;
+}
+
+.source {
+  display: inline-block;
+  margin-top: 16px;
+  font-family: system-ui, sans-serif;
+  font-size: 13px;
+  color: inherit;
+  opacity: 0.65;
+}
+
+.status {
+  text-align: center;
+  padding-top: 35vh;
+  font-family: system-ui, sans-serif;
+}
+
+.status h2 {
+  font-size: 18px;
+  margin: 0 0 8px;
+}
+
+.status p {
+  font-size: 14px;
+  opacity: 0.7;
+  margin: 0 0 24px;
+}
