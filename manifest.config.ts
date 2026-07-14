@@ -4,7 +4,7 @@ import { defineManifest } from '@crxjs/vite-plugin'
 export default defineManifest({
   manifest_version: 3,
   name: 'Treacon — Reader Mode for Threads',
-  version: '0.1.0',
+  version: '0.1.1',
   description:
     'Read long Threads self-threads as one clean page. Copy as markdown. Read-only, local-first — no servers, no data collection.',
   icons: {

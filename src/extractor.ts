@@ -34,13 +34,18 @@ export interface ExtractResult {
 
 // --- Flag auto-open (consume-once) untuk redirect feed→permalink & hop backtrack ---
 
-/** Navigasi ke url dan minta reader terbuka otomatis di sana. False jika cap hop tercapai. */
-export function requestAutoOpen(url: string): boolean {
+/**
+ * Navigasi ke url dan minta reader terbuka otomatis di sana. False jika cap hop tercapai.
+ * `replace`: true untuk hop internal (backtrack ke akar) agar tidak menumpuk history —
+ * user cukup satu kali back untuk kembali ke feed (bukan menembus tiap permalink singgahan).
+ */
+export function requestAutoOpen(url: string, replace = false): boolean {
   const hops = Number(sessionStorage.getItem(HOP_KEY) ?? '0')
   if (hops >= MAX_HOPS) return false
   sessionStorage.setItem(HOP_KEY, String(hops + 1))
   sessionStorage.setItem(AUTO_KEY, new URL(url, location.origin).pathname)
-  location.assign(url)
+  if (replace) location.replace(url)
+  else location.assign(url)
   return true
 }
 
@@ -57,6 +62,11 @@ export function consumeAutoOpen(): boolean {
 export async function extractThread(
   onProgress: (count: number) => void,
 ): Promise<ExtractResult> {
+  // Auto-open pasca-redirect (feed→permalink) bisa jalan sebelum SPA selesai render chain.
+  // Membaca DOM setengah-jadi = root salah terbaca (hop liar → banyak overlay) dan hanya
+  // post pertama terambil. Tunggu render tenang dulu, baru deteksi root & scan.
+  await settle()
+
   // Fase A: temukan akar rangkaian
   const focused = adapter.getFocusedPostNode()
   if (!focused) throw new ExtractError('no-focused-post', 'Post tidak ditemukan di halaman ini.')
@@ -75,7 +85,7 @@ export async function extractThread(
     adapter.isReplyingToSomething(rootNode) &&
     new URL(rootUrl).pathname !== location.pathname
   ) {
-    if (requestAutoOpen(rootUrl)) return new Promise(() => {}) // halaman akan berganti
+    if (requestAutoOpen(rootUrl, true)) return new Promise(() => {}) // halaman akan berganti
   }
 
   // Fase B: koleksi maju dari akar

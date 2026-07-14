@@ -88,6 +88,11 @@ export function getPostUrl(node: HTMLElement): string | null {
   return `${url.origin}${url.pathname}`
 }
 
+/** Anchor permalink (timestamp) — untuk memicu navigasi SPA Threads via klik, bukan reload. */
+export function getPostAnchor(node: HTMLElement): HTMLAnchorElement | null {
+  return timeAnchors(node)[0] ?? null
+}
+
 export function getAuthor(node: HTMLElement): Author | null {
   const links = [...node.querySelectorAll<HTMLAnchorElement>('a[href]')].filter((a) =>
     PROFILE_PATH.test(pathnameOf(a)),
@@ -136,18 +141,20 @@ export function isReplyingToSomething(node: HTMLElement): boolean {
   return /replying to|membalas/i.test(node.textContent?.slice(0, 300) ?? '')
 }
 
+// Tombol "View more"/"Show more replies" yang memuat lebih banyak post rantai.
+// PENTING: 'activity' TIDAK boleh ada di sini — "View activity"/"Lihat aktiviti" membuka
+// modal engagement Threads (portal __fb-dark-mode), bukan memuat balasan. Meng-klik-nya
+// menumpuk beberapa lapis overlay Threads di belakang reader (bug: overlay banyak).
+export const SHOW_MORE_RE =
+  /(view|show|see|load|lihat|tampilkan|muat)\s.*(more|replies|repl|lainnya|balasan|lanjut)/i
+
 /** Tombol "View more"/"Show more replies" di bawah rangkaian. */
 export function findShowMoreButton(): HTMLElement | null {
   const buttons = [
     ...document.querySelectorAll<HTMLElement>('[role="button"], button'),
   ].filter((b) => {
     const t = b.textContent?.trim() ?? ''
-    return (
-      t.length < 60 &&
-      /(view|show|see|load|lihat|tampilkan|muat)\s.*(more|replies|repl|activity|lainnya|balasan|lanjut)/i.test(
-        t,
-      )
-    )
+    return t.length < 60 && SHOW_MORE_RE.test(t)
   })
   return buttons.find((b) => b.offsetParent !== null) ?? null
 }

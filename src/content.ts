@@ -85,11 +85,30 @@ function onReaderClick(node: HTMLElement): void {
     void runReader()
     return
   }
-  // Dari feed: redirect ke permalink agar ekstraksi stabil (spec §10), flag consume-once
-  const url = adapter.getPostUrl(node)
-  if (!url || !requestAutoOpen(url)) {
+  // Dari feed: navigasi lewat router SPA Threads (klik anchor permalink), BUKAN location.assign.
+  // Tujuannya agar tombol back tetap SPA — feed sebelumnya tidak ikut ter-reload (spec §10).
+  const anchor = adapter.getPostAnchor(node)
+  if (!anchor) {
     overlay.showError('Link post tidak ditemukan.')
+    return
   }
+  void openViaSpaNav(anchor)
+}
+
+/** Buka permalink via router Threads lalu jalankan reader tanpa reload; fallback ke hard-nav. */
+async function openViaSpaNav(anchor: HTMLAnchorElement): Promise<void> {
+  const targetPath = new URL(anchor.href, location.origin).pathname
+  overlay.showProgress(0)
+  anchor.click() // pushState instan bila router menangani; kalau tidak, cek di bawah
+  const navigated = await waitFor(() => location.pathname.startsWith(targetPath), 1500)
+  if (!navigated) {
+    // Router tak menangani klik (mis. Threads ubah markup) → fallback reload lewat flag.
+    if (!requestAutoOpen(anchor.href)) overlay.showError('Link post tidak ditemukan.')
+    return
+  }
+  const ready = await waitFor(() => adapter.getFocusedPostNode() !== null, 10_000)
+  if (ready) void runReader()
+  else overlay.showError('Post tidak kunjung termuat.')
 }
 
 async function boot(): Promise<void> {

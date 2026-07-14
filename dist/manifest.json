@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Treacon — Reader Mode for Threads",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Read long Threads self-threads as one clean page. Copy as markdown. Read-only, local-first — no servers, no data collection.",
   "icons": {
     "16": "icons/icon16.png",
@@ -11,7 +11,7 @@
   "content_scripts": [
     {
       "js": [
-        "assets/content.ts-BmAqsxmT.js"
+        "assets/content.ts-DyKg52pV.js"
       ],
       "matches": [
         "https://www.threads.com/*",
@@ -31,7 +31,7 @@
         "https://www.threads.net/*"
       ],
       "resources": [
-        "assets/content.ts-BmAqsxmT.js"
+        "assets/content.ts-DyKg52pV.js"
       ],
       "use_dynamic_url": false
     }
